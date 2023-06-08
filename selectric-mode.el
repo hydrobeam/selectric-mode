@@ -34,12 +34,15 @@
 (defvar-local selectric-last-state nil
   "The last (buffer-size . point) seen by `selectric-mode'.")
 
+(devar selectric-process-mac "afplay")
+(devar selectric-process-linux "play")
+
 (defun selectric-play (sound-file)
   "Play sound from file SOUND-FILE using platform-appropriate program."
   (let ((absolute-path (expand-file-name sound-file selectric-files-path)))
     (if (eq system-type 'darwin)
-        (start-process "*Messages*" nil "afplay" absolute-path)
-      (start-process "*Messages*" nil "aplay" absolute-path))))
+        (start-process "*Messages*" nil selectric-process absolute-path)
+      (start-process "*Messages*" nil selectric-process-linux absolute-path))))
 
 (defun selectric-type ()
   "Make the sound of the printing element hitting the paper."

@@ -35,7 +35,7 @@
   "The last (buffer-size . point) seen by `selectric-mode'.")
 
 (devar selectric-process-mac "afplay")
-(devar selectric-process-linux "play")
+(devar selectric-process-linux "aplay")
 
 (defun selectric-play (sound-file)
   "Play sound from file SOUND-FILE using platform-appropriate program."

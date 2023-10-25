@@ -34,8 +34,8 @@
 (defvar-local selectric-last-state nil
   "The last (buffer-size . point) seen by `selectric-mode'.")
 
-(devar selectric-process-mac "afplay")
-(devar selectric-process-linux "aplay")
+(defvar selectric-process-mac "afplay")
+(defvar selectric-process-linux "ffplay")
 
 (defun selectric-play (sound-file)
   "Play sound from file SOUND-FILE using platform-appropriate program."

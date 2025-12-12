@@ -37,12 +37,21 @@
 (defvar selectric-process-mac "afplay")
 (defvar selectric-process-linux "paplay")
 
+;;; User-configurable volume
+(defcustom selectric-volume 35000
+  "Volume for Selectric typewriter sounds."
+  :type 'integer
+  :group 'selectric)
+
 (defun selectric-play (sound-file)
-  "Play sound from file SOUND-FILE using platform-appropriate program."
-  (let ((absolute-path (expand-file-name sound-file selectric-files-path)))
-    (if (eq system-type 'darwin)
-        (start-process "*Messages*" nil selectric-process absolute-path)
-      (start-process "*Messages*" nil selectric-process-linux absolute-path "--volume=35000"))))
+  "Play SOUND-FILE using the platform-appropriate program."
+  (let* ((absolute-path (expand-file-name sound-file selectric-files-path))
+         (program (if (eq system-type 'darwin)
+                      selectric-process-mac
+                    selectric-process-linux)))
+    (start-process "*Messages*" nil program
+                   absolute-path
+                   (format "--volume=%d" selectric-volume))))
 
 (defun selectric-type ()
   "Make the sound of the printing element hitting the paper."
@@ -75,3 +84,5 @@ Selectric typewriter."
          (after-save   . selectric-after-save)))
 
 (provide 'selectric-mode)
+
+;;; selectric-mode.el ends here

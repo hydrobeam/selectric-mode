@@ -35,20 +35,18 @@
   "The last (buffer-size . point) seen by `selectric-mode'.")
 
 (defvar selectric-process-mac "afplay")
-(defvar selectric-process-linux "ffplay")
+(defvar selectric-process-linux "paplay")
 
 (defun selectric-play (sound-file)
   "Play sound from file SOUND-FILE using platform-appropriate program."
   (let ((absolute-path (expand-file-name sound-file selectric-files-path)))
     (if (eq system-type 'darwin)
         (start-process "*Messages*" nil selectric-process absolute-path)
-      (start-process "*Messages*" nil selectric-process-linux absolute-path))))
+      (start-process "*Messages*" nil selectric-process-linux absolute-path "--volume=35000"))))
 
 (defun selectric-type ()
   "Make the sound of the printing element hitting the paper."
-  (selectric-play "selectric-type.wav")
-  (when (= (current-column) (current-fill-column))
-    (selectric-play "ping.wav")))
+  (selectric-play "selectric-type.wav"))
 
 (defun selectric-move ()
   "Make the carriage movement sound."
@@ -56,12 +54,15 @@
 
 (defun selectric-post-command ()
   "Added to `post-command-hook' to decide what sound to play."
-  (unless (minibufferp)
-    (let ((last-size (car selectric-last-state))
-          (last-point (cdr selectric-last-state)))
-      (setf selectric-last-state (cons (buffer-size) (point)))
-      (cond ((not (eql (buffer-size) last-size)) (selectric-type))
-            ((not (eql (point) last-point)) (selectric-move))))))
+  (let ((last-size (car selectric-last-state))
+        (last-point (cdr selectric-last-state)))
+    (setf selectric-last-state (cons (buffer-size) (point)))
+    (cond ((not (eql (buffer-size) last-size)) (selectric-type))
+          ((not (eql (point) last-point)) (selectric-move)))))
+
+(defun selectric-after-save ()
+  "Play the Selectric 'ping' sound after saving a file."
+  (selectric-play "ping.wav"))
 
 ;;;###autoload
 (define-minor-mode selectric-mode
@@ -70,10 +71,7 @@ When Selectric mode is enabled, your Emacs will sound like an IBM
 Selectric typewriter."
   :global t
   :group 'selectric
-  (if selectric-mode
-      (add-hook 'post-command-hook 'selectric-post-command)
-    (remove-hook 'post-command-hook 'selectric-post-command)))
+  :hook ((post-command . selectric-post-command)
+         (after-save   . selectric-after-save)))
 
 (provide 'selectric-mode)
-
-;;; selectric-mode.el ends here

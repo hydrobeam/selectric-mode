@@ -70,7 +70,7 @@
           ((not (eql (point) last-point)) (selectric-move)))))
 
 (defun selectric-after-save ()
-  "Play the Selectric 'ping' sound after saving a file."
+  "Play the 'ping' sound after saving a file."
   (selectric-play "ping.wav"))
 
 ;;;###autoload
